@@ -1,10 +1,10 @@
 import { particleParameters } from '@/lib/particles/parameters';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { PNG } from 'pngjs';
-import { db, getExperience } from '@/lib/db';
+import { createExperience, getExperience } from '@/lib/db';
 import { analyzePixels } from '@/lib/analysis';
 import { generateFragrance } from '@/lib/fragrance';
+import { decodePng } from '@/lib/png';
 import type { Experience } from '@/lib/types';
 export const runtime = 'nodejs';
 const input = z.object({
@@ -23,16 +23,10 @@ export async function POST(request: Request) {
     if (body.length > 8_500_000)
       return NextResponse.json({ error: 'imageTooLarge' }, { status: 413 });
     const value = input.parse(JSON.parse(body));
-    const exists = getExperience(value.id);
+    const exists = await getExperience(value.id);
     if (exists) return NextResponse.json(exists);
     const bytes = Buffer.from(value.image.split(',')[1], 'base64');
-    if (
-      bytes.length < 24 ||
-      bytes.readUInt32BE(16) > 2048 ||
-      bytes.readUInt32BE(20) > 2048
-    )
-      throw Error('invalidImage');
-    const png = PNG.sync.read(bytes, { checkCRC: true });
+    const png = await decodePng(bytes);
     const w = 256,
       h = 192,
       pixels = new Uint8ClampedArray(w * h * 4);
@@ -62,19 +56,7 @@ export async function POST(request: Request) {
       sourceId: value.sourceId,
       visual: { seed: 42, ...particleParameters(analysis) },
     };
-    db()
-      .prepare(
-        'INSERT INTO experiences(id,participant_id,created_at,title,demo,image,payload) VALUES(?,?,?,?,?,?,?)',
-      )
-      .run(
-        experience.id,
-        experience.participantId,
-        experience.createdAt,
-        experience.title,
-        Number(experience.demo),
-        bytes,
-        JSON.stringify(experience),
-      );
+    await createExperience(experience, bytes);
     return NextResponse.json(experience, { status: 201 });
   } catch (error) {
     console.error(

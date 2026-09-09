@@ -11,7 +11,9 @@ test('complete memory experience, persistence and report', async ({ page }) => {
   await expect(
     page.getByRole('heading', { name: '404 NOT FOUND' }),
   ).toBeVisible();
-  await expect(page.getByText('视觉—嗅觉记忆重构系统')).toBeVisible();
+  await expect(
+    page.getByText('视觉—嗅觉记忆重构系统', { exact: true }),
+  ).toBeVisible();
   await expect(
     page.getByText(
       '在网络里，404代表页面无法访问；在这件交互装置中，404代表感官的裂隙。你亲手绘出图像，看见画面，试图寻找与之匹配的气味。视觉与嗅觉永远无法完全等同，这无法被填补的感知空白，就是404。',

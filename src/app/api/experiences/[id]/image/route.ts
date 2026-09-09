@@ -1,15 +1,13 @@
-import { db } from '@/lib/db';
+import { getExperienceImage } from '@/lib/db';
 export const runtime = 'nodejs';
 export async function GET(
   _: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
-  const row = db()
-    .prepare('SELECT image FROM experiences WHERE id=?')
-    .get(id) as { image: Uint8Array } | undefined;
-  return row
-    ? new Response(new Uint8Array(row.image), {
+  const image = await getExperienceImage(id);
+  return image
+    ? new Response(image, {
         headers: {
           'Content-Type': 'image/png',
           'Cache-Control': 'private, max-age=86400',

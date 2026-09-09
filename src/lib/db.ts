@@ -2,9 +2,12 @@ import { normalizeExperience } from './localization';
 import { DatabaseSync } from 'node:sqlite';
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
+import type { Fragrance } from './fragrance';
 import type { Experience } from './types';
+
 let connection: DatabaseSync;
-export function db() {
+
+function db() {
   if (!connection) {
     mkdirSync(join(process.cwd(), 'data'), { recursive: true });
     connection = new DatabaseSync(join(process.cwd(), 'data', 'memory.sqlite'));
@@ -16,15 +19,73 @@ CREATE TABLE IF NOT EXISTS variants(id INTEGER PRIMARY KEY AUTOINCREMENT, experi
   }
   return connection;
 }
-export function getExperience(id: string): Experience | null {
+
+export async function getExperience(id: string): Promise<Experience | null> {
   const row = db()
     .prepare('SELECT payload FROM experiences WHERE id=?')
     .get(id) as { payload: string } | undefined;
   if (!row) return null;
-  const e = JSON.parse(row.payload) as Experience;
-  const variants = db()
+  const experience = JSON.parse(row.payload) as Experience;
+  experience.variants = await listVariants(id);
+  return normalizeExperience(experience);
+}
+
+export async function createExperience(
+  experience: Experience,
+  image: Uint8Array,
+) {
+  db()
+    .prepare(
+      'INSERT INTO experiences(id,participant_id,created_at,title,demo,image,payload) VALUES(?,?,?,?,?,?,?)',
+    )
+    .run(
+      experience.id,
+      experience.participantId,
+      experience.createdAt,
+      experience.title,
+      Number(experience.demo),
+      image,
+      JSON.stringify(experience),
+    );
+}
+
+export async function getExperienceImage(id: string) {
+  const row = db()
+    .prepare('SELECT image FROM experiences WHERE id=?')
+    .get(id) as { image: Uint8Array } | undefined;
+  return row ? new Uint8Array(row.image) : null;
+}
+
+export async function addVariant(experienceId: string, fragrance: Fragrance) {
+  db()
+    .prepare(
+      'INSERT INTO variants(experience_id,created_at,payload) VALUES(?,?,?)',
+    )
+    .run(experienceId, new Date().toISOString(), JSON.stringify(fragrance));
+}
+
+export async function listVariants(experienceId: string) {
+  const rows = db()
     .prepare('SELECT payload FROM variants WHERE experience_id=? ORDER BY id')
-    .all(id) as { payload: string }[];
-  e.variants = variants.map((v) => JSON.parse(v.payload));
-  return normalizeExperience(e);
+    .all(experienceId) as { payload: string }[];
+  return rows.map((row) => JSON.parse(row.payload) as Fragrance);
+}
+
+export async function listExperiences(filters: {
+  query: string;
+  from: string;
+  to: string;
+  includeDemo: boolean;
+}) {
+  const rows = db()
+    .prepare(
+      'SELECT payload FROM experiences WHERE participant_id LIKE ? AND created_at>=? AND created_at<=? AND (?=1 OR demo=0) ORDER BY created_at DESC',
+    )
+    .all(
+      `%${filters.query}%`,
+      filters.from,
+      filters.to,
+      Number(filters.includeDemo),
+    ) as { payload: string }[];
+  return rows.map((row) => JSON.parse(row.payload) as Experience);
 }

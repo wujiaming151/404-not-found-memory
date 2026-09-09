@@ -20,18 +20,19 @@ pnpm dev
 
 ## 结构
 
-| 路径                     | 职责                                     |
-| ------------------------ | ---------------------------------------- |
-| `src/app`                | 页面与 API；研究区域单独验证登录         |
-| `src/components`         | 绘画工具、粒子渲染、结果与图表           |
-| `src/lib/analysis.ts`    | RGB/HSV、主色聚合、亮度、留白与边缘密度  |
-| `src/lib/fragrance.ts`   | 香调权重、名称、前中尾调、解释与版本     |
-| `src/lib/db.ts`          | SQLite schema、索引与查询                |
-| `src/lib/draft.ts`       | IndexedDB 草稿与最近 25 个画布状态       |
-| `src/lib/report.ts`      | 独立 Canvas PNG 长图排版                 |
-| `src/lib/particles/`     | Three.js GPU 粒子、Shader 与有界参数映射 |
-| `src/i18n/`、`messages/` | next-intl 与中、英、韩、日四语言         |
-| `tests`                  | Playwright 浏览器验收                    |
+| 路径                       | 职责                                     |
+| -------------------------- | ---------------------------------------- |
+| `src/app`                  | 页面与 API；研究区域单独验证登录         |
+| `src/components`           | 绘画工具、粒子渲染、结果与图表           |
+| `src/lib/analysis.ts`      | RGB/HSV、主色聚合、亮度、留白与边缘密度  |
+| `src/lib/fragrance.ts`     | 香调权重、名称、前中尾调、解释与版本     |
+| `src/lib/db.ts`            | 本地 SQLite schema、索引与查询           |
+| `src/lib/db.cloudflare.ts` | Cloudflare D1 与 KV 数据适配器           |
+| `src/lib/draft.ts`         | IndexedDB 草稿与最近 25 个画布状态       |
+| `src/lib/report.ts`        | 独立 Canvas PNG 长图排版                 |
+| `src/lib/particles/`       | Three.js GPU 粒子、Shader 与有界参数映射 |
+| `src/i18n/`、`messages/`   | next-intl 与中、英、韩、日四语言         |
+| `tests`                    | Playwright 浏览器验收                    |
 
 ## 视觉设计
 
@@ -53,7 +54,7 @@ Particleify 未确认有公开可调用的 API 或 SDK；其 HTML 导出需要�
 
 冷暖按色相分类，低饱和像素为中性。所有比例采用最大余数分配以保证总和为 100%。香氛变体有固定种子，权重扰动不超过 12%；规则版本随结果保存。香调比例描述艺术映射方向，不代表香料投料浓度。
 
-SQLite 保存于 `data/memory.sqlite`，含 `experiences` 和 `variants` 两张表。原始 PNG 以 BLOB 原子保存，通过图片 API 读取；结构化分析与香氛存为 JSON。每次提交保留独立快照；同一提交 ID 重试不会重复插入；重新生成追加变体。示例默认不进入研究列表，CSV 包含所选作品的全部香氛版本。
+本地开发使用 `data/memory.sqlite`；Cloudflare 运行时使用 D1 保存结构化记录，并用 Workers KV 保存原始 PNG。两种环境共用同一查询接口。每次提交保留独立快照；同一提交 ID 重试不会重复插入；重新生成追加变体。示例默认不进入研究列表，CSV 包含所选作品的全部香氛版本。
 
 备份时使用 SQLite 备份工具，或停止服务后完整复制 `data/`。当前为单机演示架构；多实例部署应迁移到 PostgreSQL 与对象存储。知道完整 UUID 结果链接的人可以查看作品，研究列表和批量导出需要密码。外网正式部署前应增加参与者访问控制、数据保留策略与持久化登录限流。
 
@@ -69,3 +70,9 @@ pnpm test:e2e
 浏览器测试需要先启动服务，默认使用 Windows Edge，可通过 `PLAYWRIGHT_BROWSER_PATH` 指定其他 Chromium。测试作品标记为示例。截图和下载位于忽略的 `test-results/`。
 
 覆盖算法边界、绘画与撤销重做、刷新恢复、保存失败重试、结果版本、报告下载、研究认证与 CSV。iPad 使用触控模拟，不等同于真实 Safari / Apple Pencil 硬件测试。局域网 iPad 访问建议使用 HTTPS，以获得完整浏览器存储与安全上下文能力。
+
+## Cloudflare 部署
+
+本项目包含服务端 API 和持久化数据，不使用静态 Pages 输出。Cloudflare 部署采用 Workers、vinext、D1 与 Workers KV。控制台的仓库根目录保持 `/`，构建命令填写 `pnpm run build:vinext`，部署命令填写 `pnpm run deploy:vinext`，不填写输出目录。
+
+首次部署前创建名为 `memory-reconstruction` 的 D1 数据库和名为 `memory-images` 的 KV 命名空间，把资源 ID 写入 `wrangler.jsonc`，并在 Worker 设置中添加加密变量 `RESEARCH_PASSWORD`。部署脚本会先应用 `migrations/`，再发布 Worker。Node.js 版本需为 22.13 或更高。

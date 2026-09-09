@@ -9,3 +9,6 @@ playwright-report/
 *.tsbuildinfo
 *.log
 lighthouse-report.json
+/dist/
+.vinext/
+.wrangler/

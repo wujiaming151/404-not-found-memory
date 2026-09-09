@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db, getExperience } from '@/lib/db';
+import { addVariant, getExperience } from '@/lib/db';
 import { generateFragrance } from '@/lib/fragrance';
 export const runtime = 'nodejs';
 export async function POST(
@@ -7,7 +7,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
-  const e = getExperience(id);
+  const e = await getExperience(id);
   if (!e)
     return NextResponse.json({ error: 'missingExperience' }, { status: 404 });
   const fragrance = generateFragrance(
@@ -16,10 +16,6 @@ export async function POST(
   );
   fragrance.name = e.title;
   fragrance.english = e.title;
-  db()
-    .prepare(
-      'INSERT INTO variants(experience_id,created_at,payload) VALUES(?,?,?)',
-    )
-    .run(id, new Date().toISOString(), JSON.stringify(fragrance));
+  await addVariant(id, fragrance);
   return NextResponse.json(fragrance);
 }
