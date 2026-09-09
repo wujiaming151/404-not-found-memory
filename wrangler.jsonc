@@ -19,14 +19,14 @@
     {
       "binding": "DB",
       "database_name": "memory-reconstruction",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "ea0198e2-b91f-4dcb-a9f1-5eae66eb30bc",
       "migrations_dir": "migrations",
     },
   ],
   "kv_namespaces": [
     {
       "binding": "MEMORY_IMAGES",
-      "id": "00000000000000000000000000000000",
+      "id": "3a892c9c6cab4d2c9eab4d306cbfaec3",
     },
   ],
 }
