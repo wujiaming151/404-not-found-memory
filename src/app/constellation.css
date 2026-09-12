@@ -314,24 +314,6 @@ html:not([lang='zh-CN']) .constellation-home .hero h1 {
   object-fit: cover;
   filter: saturate(0.65) contrast(0.94);
 }
-.image-slot figcaption {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-content: center;
-  gap: 10px;
-  padding: 24px;
-  text-align: center;
-  color: var(--muted);
-  font-size: 13px;
-  transition: opacity 0.25s;
-}
-.image-slot code {
-  color: var(--color-saffron-spark);
-  font-family: inherit;
-  font-size: 11px;
-  overflow-wrap: anywhere;
-}
 .sensory-label {
   display: block;
   font-size: 12px;

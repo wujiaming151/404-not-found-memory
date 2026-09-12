@@ -27,29 +27,17 @@ const journey = [
 function ImageSlot({
   src,
   alt,
-  available,
 }: {
   src: string;
   alt: string;
-  available: boolean;
 }) {
   return (
     <figure className="image-slot">
-      {available && <img src={src} alt={alt} />}
-      {!available && (
-        <figcaption>
-          <span>{alt}</span>
-          <code>public{src}</code>
-        </figcaption>
-      )}
+      <img src={src} alt={alt} />
     </figure>
   );
 }
-export function Landing({
-  availableImages = [],
-}: {
-  availableImages?: string[];
-}) {
+export function Landing() {
   const t = useCopy(),
     [image, setImage] = useState(''),
     [selected, setSelected] = useState(1);
@@ -148,9 +136,6 @@ export function Landing({
             <ImageSlot
               src="/assets/project-concept.webp"
               alt={t('conceptImage')}
-              available={availableImages.includes(
-                '/assets/project-concept.webp',
-              )}
             />
           </section>
         </Reveal>
@@ -164,18 +149,12 @@ export function Landing({
               <ImageSlot
                 src="/assets/drawing-process.webp"
                 alt={t('drawingImage')}
-                available={availableImages.includes(
-                  '/assets/drawing-process.webp',
-                )}
               />
             </div>
             <div className="conversion-media">
               <ImageSlot
                 src="/assets/visual-olfactory-process.webp"
                 alt={t('conversionImage')}
-                available={availableImages.includes(
-                  '/assets/visual-olfactory-process.webp',
-                )}
               />
               <div>
                 <h3>{t('scentStep')}</h3>
