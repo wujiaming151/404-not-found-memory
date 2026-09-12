@@ -332,9 +332,6 @@ html:not([lang='zh-CN']) .constellation-home .hero h1 {
   font-size: 11px;
   overflow-wrap: anywhere;
 }
-.image-slot[data-loaded='true'] figcaption {
-  opacity: 0;
-}
 .sensory-label {
   display: block;
   font-size: 12px;

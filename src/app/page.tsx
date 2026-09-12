@@ -3,9 +3,9 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 export default function Home() {
   const imagePaths = [
-    '/images/project-concept.jpg',
-    '/images/drawing-process.jpg',
-    '/images/visual-olfactory-process.jpg',
+    '/assets/project-concept.webp',
+    '/assets/drawing-process.webp',
+    '/assets/visual-olfactory-process.webp',
   ];
   return (
     <Landing

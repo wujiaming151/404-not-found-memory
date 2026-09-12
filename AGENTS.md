@@ -13,6 +13,7 @@ Keep modules separated by responsibility:
 - `src/lib/`: independent image-analysis, fragrance-rule, report-export, and persistence modules.
 - `src/lib/particles/`: bounded parameters, GPU engine, and shaders; keep renderer effects independent of locale.
 - `src/i18n/` and `messages/`: next-intl provider and four matching translation dictionaries.
+- `public/assets/`: landing-page illustrations and other static presentation media. Use kebab-case filenames, prefer optimized WebP, and keep translatable text out of images.
 - `src/lib/demo.ts`: generated demonstration artwork.
 - `src/lib/db.ts`: SQLite schema and queries; generated `data/` is ignored by Git.
 - `tests/`: integration and end-to-end tests; colocate unit tests as `*.test.ts`.

@@ -262,7 +262,7 @@
   "titleRequired": "まず、この記憶に名前をつけてください。",
   "memoryNameLabel": "記憶の名前",
   "fragranceNameLabel": "香りの名前",
-  "conceptImage": "プロジェクト概念画像のプレースホルダー",
-  "drawingImage": "描画プロセス画像のプレースホルダー",
-  "conversionImage": "視覚と嗅覚の変換画像のプレースホルダー"
+  "conceptImage": "視覚と香りのあいだにある感覚の裂け目を描いた抽象イラスト",
+  "drawingImage": "描くことで記憶が少しずつ形になる様子を描いた抽象イラスト",
+  "conversionImage": "視覚の断片が香りの流れへ変化する様子を描いた抽象イラスト"
 }

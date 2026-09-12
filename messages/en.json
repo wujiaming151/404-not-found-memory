@@ -262,7 +262,7 @@
   "titleRequired": "Please name this memory first.",
   "memoryNameLabel": "Memory name",
   "fragranceNameLabel": "Fragrance name",
-  "conceptImage": "Project concept image placeholder",
-  "drawingImage": "Drawing process image placeholder",
-  "conversionImage": "Visual and olfactory process image placeholder"
+  "conceptImage": "Abstract illustration of the sensory gap between sight and scent",
+  "drawingImage": "Abstract illustration of a memory gradually taking shape through drawing",
+  "conversionImage": "Abstract illustration of visual fragments transforming into scent currents"
 }

@@ -262,7 +262,7 @@
   "titleRequired": "请先为这段记忆取一个名字。",
   "memoryNameLabel": "记忆名称",
   "fragranceNameLabel": "香氛名称",
-  "conceptImage": "项目概念图片占位",
-  "drawingImage": "绘画流程图片占位",
-  "conversionImage": "视觉与嗅觉转换图片占位"
+  "conceptImage": "描绘视觉与气味之间感官裂隙的抽象插画",
+  "drawingImage": "描绘记忆在绘画中逐渐成形的抽象插画",
+  "conversionImage": "描绘视觉碎片转化为气味流线的抽象插画"
 }

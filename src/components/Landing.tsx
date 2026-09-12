@@ -34,13 +34,14 @@ function ImageSlot({
   available: boolean;
 }) {
   return (
-    <figure className="image-slot" data-loaded={available || undefined}>
-      {/* The placeholder disappears automatically when the named asset is added. */}
+    <figure className="image-slot">
       {available && <img src={src} alt={alt} />}
-      <figcaption>
-        <span>{alt}</span>
-        <code>public{src}</code>
-      </figcaption>
+      {!available && (
+        <figcaption>
+          <span>{alt}</span>
+          <code>public{src}</code>
+        </figcaption>
+      )}
     </figure>
   );
 }
@@ -145,10 +146,10 @@ export function Landing({
               <p>{t('aboutSecond')}</p>
             </div>
             <ImageSlot
-              src="/images/project-concept.jpg"
+              src="/assets/project-concept.webp"
               alt={t('conceptImage')}
               available={availableImages.includes(
-                '/images/project-concept.jpg',
+                '/assets/project-concept.webp',
               )}
             />
           </section>
@@ -161,19 +162,19 @@ export function Landing({
                 <p>{t('journeyIntro')}</p>
               </div>
               <ImageSlot
-                src="/images/drawing-process.jpg"
+                src="/assets/drawing-process.webp"
                 alt={t('drawingImage')}
                 available={availableImages.includes(
-                  '/images/drawing-process.jpg',
+                  '/assets/drawing-process.webp',
                 )}
               />
             </div>
             <div className="conversion-media">
               <ImageSlot
-                src="/images/visual-olfactory-process.jpg"
+                src="/assets/visual-olfactory-process.webp"
                 alt={t('conversionImage')}
                 available={availableImages.includes(
-                  '/images/visual-olfactory-process.jpg',
+                  '/assets/visual-olfactory-process.webp',
                 )}
               />
               <div>
